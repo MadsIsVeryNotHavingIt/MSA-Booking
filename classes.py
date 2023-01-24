@@ -12,6 +12,10 @@ class menu_navigation():
         time_exists = time_slots_management.check_exists_time(self = time_slots_management)
         print("Staff table: " + str(staff_exists) + "\nAppointments Table: " + str(appointments_exists) + "\nTime Slots Table: " + str(time_exists))
         logged_in = False
+        if staff_exists == False:
+            staff_management.tbl_staff_create()
+        if appointments_exists == False:
+            apppintments_management.tbl_appointments_create()
         while logged_in != True:
             logged_in = staff_management.tbl_staff_login(self = staff_management)
         
@@ -76,7 +80,7 @@ class staff_management():
     def tbl_staff_create(self):
         cur.execute('''CREATE TABLE tblSTAFF
                  (staff_num, staff_name, staff_pass, staff_email, staff_phone)''')
-            print("Staff file created.")
+        print("Staff file created.")
 
     def tbl_staff_insert(self):
         staff_num, staff_name, staff_pass, staff_email, staff_phone = staff_management.get_staff_data(self)
@@ -117,16 +121,19 @@ class apppintments_management():
             exists = False
         return exists
 
+    def tbl_appointments_create(self):
+        cur.execute('''CREATE TABLE tblAPPOINTMENTS
+                 (staff_num, customer_num, time_slot_ID)''')
+        print("Appointments file created.")
+
     def tbl_appointments_insert(self):
         staff_num, customer_num, time_slot_ID = apppintments_management.get_appointment_data(self)
         try:
             cur.execute("INSERT INTO tblAPPOINTMENTS VALUES ((?), (?), (?))", (staff_num, customer_num, time_slot_ID))
         except sqlite3.OperationalError:
-            cur.execute('''CREATE TABLE tblAPPOINTMENTS
-                    (staff_num, customer_num, time_slot_ID)''')
-            print("Appointments file created...")
+            print("Appointments file not found.")
         except:
-            print("Error")
+            print("Error.")
 
     def tbl_appointments_read(self):
         ()   
@@ -143,24 +150,27 @@ class time_slots_management():
         self.tables = tables
     
     def check_exists_time(self):
-        cur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='{tblAPPOINTMENTS}';")
+        cur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='{tblTIMETABLE';")
         if cur.fetchall() == 1:
             exists = True
         elif cur.fetchall() == 0:
             exists = False
         else:
-            print("Error in checking existence of tblAPPOINTMENTS")
+            print("Error in checking existence of timetable file.")
             exists = False
         return exists
+
+    def tbl_time_slots_create(self):
+        cur.execute('''CREATE TABLE tblTIMETABLE
+                    (time_slot_ID, )''')
+        print("Timetable file created...")
 
     def tbl_time_slots_insert(self, staff_num, customer_num):
         time_slot_ID, date_time, used = time_slots_management.get_time_slots(self)
         try:
             cur.execute("INSERT INTO tblAPPOINTMENTS VALUES ((?), (?), (?))", (staff_num, customer_num, time_slot_ID))
         except sqlite3.OperationalError:
-            cur.execute('''CREATE TABLE tblAPPOINTMENTS
-                    (staff_num, customer_num, time_slot_ID)''')
-            print("Appointments file created...")
+            print("Timetable file not found.")
         except:
             print("Error")
 
