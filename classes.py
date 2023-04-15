@@ -7,20 +7,19 @@ class menu_navigation():
         ()
     
     def boot_login(self):
-        staff_exists = staff_management.check_exist_staff(self = staff_management)
-        appointments_exists = apppintments_management.check_exist_appointments(self = apppintments_management)
-        time_exists = time_slots_management.check_exists_time(self = time_slots_management)
-        print("Staff table: " + str(staff_exists) + "\nAppointments Table: " + str(appointments_exists) + "\nTime Slots Table: " + str(time_exists))
-        logged_in = False
-        if staff_exists == False:
-            staff_management.tbl_staff_create()
-        if appointments_exists == False:
-            apppintments_management.tbl_appointments_create()
-        while logged_in != True:
-            logged_in = staff_management.tbl_staff_login(self = staff_management)
-        
+        '''Prompts user for next method/function to launch, launches selected method/function'''
 
+        print("Welcome to MSA Bookings.")
+        login_or_new = input("Please select an option to continue; \n 1. Login \n 2. Admin Login \n Enter:")
+        if login_or_new == '1':
+            logged_in = staff_management.tbl_staff_login(self = staff_management, admin = False)
+        logged_in = False
+        while logged_in != True:
+            
+            logged_in = staff_management.tbl_staff_login(self = staff_management, admin = True)
+        
     def main_menu(self):
+
         ()
         
 
@@ -29,53 +28,41 @@ class staff_management():
         self.database = database
         self.tables = tables
 
-    def check_exist_staff(self):
-        cur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='{tblSTAFF}';")
-        if cur.fetchall() == 1:
-            exists = True
-        elif cur.fetchall() == 0:
-            exists = False
-        else:
-            print("Error in checking existence of tblAPPOINTMENTS")
-            exists = False
-        return exists
-
-    def select_option(self):
-        valid = None
-        while valid != True:
-            select = (input("Please login or make a new account;\n 1. Login\n 2. Create staff login \nEnter: "))
-            try:
-                select_str = str(select)
-                print(select_str)
-                if select_str == '1' or '2':
-                    valid = True
-            except:
-                print("not working")
-            if select_str == '1':
-                staff_management.tbl_staff_login(self)
-            elif select_str == '2':
-                staff_management.tbl_staff_insert(self)
-            else:
-                print("\nError. Please enter a valid input\n")
-                staff_management.select_option(self)
+    #def select_option(self):
+    #    valid = None
+    #    while valid != True:
+    #        select = (input("Please login or make a new account;\n 1. Login\n 2. Create staff login \nEnter: "))
+    #        try:
+    #            select_str = str(select)
+    #            print(select_str)
+    #            if select_str == '1' or '2':
+    #                valid = True
+    #        except:
+    #            ()
+    #        if select_str == '1':
+    #            staff_management.tbl_staff_login(self)
+    #        elif select_str == '2':
+    #            staff_management.tbl_staff_insert(self)
+    #        else:
+    #            print("\nError. Please enter a valid input\n")
+    #            staff_management.select_option(self)
       
-    def tbl_staff_login(self):
+    def tbl_staff_login(self, admin):
         print("STAFF LOGIN \nEnter your staff number and password to login;")
         input_num = str(input("Staff Number: "))
         input_pass = hash(str(input("Password: ")))
-        ###CHECK INPUT DATA AGAINST EXISTING DATA###
-        ###VALIDATION, INCORRECT DATA###
         cur.execute("SELECT staff_pass FROM tblSTAFF WHERE staff_num LIKE (?)", (input_num))
         staff_pass = cur.fetchall()
         print(staff_pass, input_pass)
-        if input_pass == staff_pass:
-            print("Login successful.")
-            logged_in = True
-            return logged_in
-        else:
-            print("Login unsuccessful.")
-            logged_in = False
-            return logged_in
+        for i in range(0, 2):
+            if input_pass == staff_pass:
+                print("Login successful.")
+                logged_in = True
+                return logged_in
+            else:
+                print("Login unsuccessful.")
+                logged_in = False
+                return logged_in
 
     def tbl_staff_create(self):
         cur.execute('''CREATE TABLE tblSTAFF
@@ -110,17 +97,6 @@ class apppintments_management():
         self.database = database
         self.tables = tables
 
-    def check_exist_appointments(self):
-        cur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='{tblAPPOINTMENTS}';")
-        if cur.fetchall() == 1:
-            exists = True
-        elif cur.fetchall() == 0:
-            exists = False
-        else:
-            print("Error in checking existence of tblAPPOINTMENTS")
-            exists = False
-        return exists
-
     def tbl_appointments_create(self):
         cur.execute('''CREATE TABLE tblAPPOINTMENTS
                  (staff_num, customer_num, time_slot_ID)''')
@@ -148,17 +124,6 @@ class time_slots_management():
     def __init__(self, database, tables):
         self.database = database
         self.tables = tables
-    
-    def check_exists_time(self):
-        cur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='{tblTIMETABLE';")
-        if cur.fetchall() == 1:
-            exists = True
-        elif cur.fetchall() == 0:
-            exists = False
-        else:
-            print("Error in checking existence of timetable file.")
-            exists = False
-        return exists
 
     def tbl_time_slots_create(self):
         cur.execute('''CREATE TABLE tblTIMETABLE

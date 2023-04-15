@@ -2,14 +2,65 @@ import sqlite3
 con = sqlite3.connect('msaBooking.db')
 cur = con.cursor()
 
-from classes import staff_management
-from classes import apppintments_management
-from classes import time_slots_management
-from classes import menu_navigation
+from functions import database_appointments, database_staff, main_functions
 
-### DONE: dynamic sql statements in subroutines, inputting / outputting staff data, subroutines for each table
-###MUST DO: Hashing passwords, create sequence of steps after boot, use date time data type for tbl_TIMETABLE
+def startup():
+    '''user selects a login option.'''
 
-###BOOT###
-menu_navigation.boot_login(self = menu_navigation)
+    print("Select login option: \n 1. Staff member login \n 2. Administrator login")
+    login_selection = input("Enter: ")
+    if login_selection == '1':
+        staff_login()
+    elif login_selection == '2':
+        admin_login()
+        
+   #Branches to staff login page or admin login page at the user's choice.
 
+
+def staff_login():
+    '''Login for regular staff members.'''
+
+    print("\n\nStaff Login\n")
+    for tries in range(0,2):
+        print("Please enter your login details:")
+        staff_number = input("Staff number: ")
+        password = input("Password: ")
+        try:
+            cur.execute("SELECT staff_password FROM tblSTAFF WHERE staff_num = (?)", (staff_number))#
+            if cur.fetchall() == password:
+                print("Login successful!")
+                menu(admin = False)
+        except:
+            print("Incorrect login details.")
+            tries = tries + 1
+
+def admin_login():
+    '''Login for administrators.'''
+
+    tries = 0
+    logged_in = False
+    print("\n\nAdmin Login\n")
+    while tries < 3 and logged_in == False:
+        print("Please enter your login details:")
+        staff_number = input("Staff number: ")
+        password = input("Password: ")
+
+        if staff_number == 'template_number' and password == 'template_password':
+            print("Login successful!")
+            logged_in = True
+            menu(admin = True)
+        
+        else:
+            print("Incorrect login details.")
+            tries = tries + 1
+    if tries >= 3:
+        print("Too many attempts!")
+    print("The program will now close.")
+
+
+
+def menu(admin):
+    ()
+
+
+startup()
