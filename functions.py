@@ -45,11 +45,14 @@ class database_staff():
         print("\n\nCreate new staff login\n")
         print("Please enter new user data:")
         staff_number = input("Please enter your staff number: ")
+        staff_name = input("Please enter your name: ")
         staff_password = input("Please enter a password: ")
 
-        #Hashing
-        hashlib_sha1 = hashlib.sha1(staff_password)
-        staff_password_hashed = hashlib_sha1.digest()
+        #Hashing password
+        staff_password_enc = staff_password.encode()
+        staff_password_hashed = hashlib.sha1(staff_password_enc).hexdigest()
+        print(staff_password_hashed)
+        print(staff_password, " hashed into ", staff_password_hashed)
 
         try:
             cur.execute("INSERT INTO tblSTAFF VALUES ((?), (?), (?))", (staff_number, staff_name, staff_password_hashed))
@@ -73,8 +76,8 @@ class main_functions():
     #    elif login_selection == '2':
     #        main_functions.admin_login(self)
     #        
-        #Branches to staff login page or admin login page at the user's choice.
-        #Code has been marked as commented and moved to main.py
+    #    #Branches to staff login page or admin login page at the user's choice.
+    #    #Code has been marked as commented and moved to main.py
 
     def staff_login(self):
         '''Login for regular staff members.'''
@@ -87,7 +90,12 @@ class main_functions():
             try:
                 cur.execute("SELECT staff_password FROM tblSTAFF WHERE staff_num = (?)", (staff_number))
                 #Uses sqlite3 module to query the database, where the cursor has been defined at the top of the file
-                if cur.fetchall() == password:
+
+                password_enc = password.encode
+                hashlib_sha1 = hashlib.sha1(password_enc)
+                password_hashed = hashlib_sha1.digest()
+
+                if cur.fetchall() == password_hashed:
                     print("Login successful!")
                     main_functions.menu(self, admin = False)
             except:
