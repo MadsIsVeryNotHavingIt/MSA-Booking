@@ -62,16 +62,17 @@ def admin_login():
 def menu(admin):
     ()
 
-import hashlib
+#import hashlib
 
-#000staff_password = 'Password'
+#staff_password = 'Password'
 
 #staff_password_enc = staff_password.encode
 #hashlib_sha1 = hashlib.sha1(staff_password_enc)
-#staff_password_hashed = hashlib_sha1.digest()
+##staff_password_hashed = hashlib_sha1.digest()
 #print(staff_password, " hashed into ", staff_password_hashed)
 
 #staff_password_enc = staff_password.encode()
 #staff_password_hashed = hashlib.sha1(staff_password_enc).hexdigest()
 #print(staff_password_hashed)
+
 database_staff.new_staff_login(self = "")

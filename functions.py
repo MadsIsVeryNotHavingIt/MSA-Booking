@@ -48,11 +48,11 @@ class database_staff():
         staff_name = input("Please enter your name: ")
         staff_password = input("Please enter a password: ")
 
-        #Hashing password
         staff_password_enc = staff_password.encode()
         staff_password_hashed = hashlib.sha1(staff_password_enc).hexdigest()
-        print(staff_password_hashed)
-        print(staff_password, " hashed into ", staff_password_hashed)
+        #Hashes the password and produces a hash value
+
+        print(staff_password, " hashed into ", staff_password_hashed) #print line for observing during testing only
 
         try:
             cur.execute("INSERT INTO tblSTAFF VALUES ((?), (?), (?))", (staff_number, staff_name, staff_password_hashed))
