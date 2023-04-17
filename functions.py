@@ -1,6 +1,7 @@
 import sqlite3
 con = sqlite3.connect('msaBooking.db')
 cur = con.cursor()
+import hashlib
 
 
 class database_appointments():
@@ -22,9 +23,41 @@ class database_staff():
     #ADMIN FUNCTIONS
     def create_staff_table(self):
         '''Admin function for creating a staff table.'''
+        print("\n\nCreate Staff Table\n")
+        confirmation = ""
+        while confirmation != '1' and confirmation != '2':
+            #Validation: while loop repeats until user gives an interpreted response.
+            print("Are you sure you want to create a new staff table? \n 1. Confirm \n 2. Cancel")
+            confirmation = input("Enter:")
+            if confirmation == '1':
+                cur.execute('''CREATE TABLE tblSTAFF (staff_num, staff_name, staff_pass)''') 
+                #
+                print("Staff file created.")
+                return
+            elif confirmation == '2':
+                return
+            else:
+                print("Please enter a valid input.")
 
-        cur.execute('''CREATE TABLE tblSTAFF (staff_num, staff_name, staff_pass)''')
-        print("Staff file created.")
+    def new_staff_login(self):
+        '''Admin function for creating new staff member logins.'''
+
+        print("\n\nCreate new staff login\n")
+        print("Please enter new user data:")
+        staff_number = input("Please enter your staff number: ")
+        staff_password = input("Please enter a password: ")
+
+        #Hashing
+        hashlib_sha1 = hashlib.sha1(staff_password)
+        staff_password_hashed = hashlib_sha1.digest()
+
+        try:
+            cur.execute("INSERT INTO tblSTAFF VALUES ((?), (?), (?))", (staff_number, staff_name, staff_password_hashed))
+            print("New login created.")
+        except sqlite3.OperationalError:
+            print("Error: Table not found. Please contact an administrator to create or recover the table.")
+        except:
+            print("Error")
 
 class main_functions():
     def __init__(self):

@@ -2,7 +2,7 @@ import sqlite3
 con = sqlite3.connect('msaBooking.db')
 cur = con.cursor()
 
-from functions import database_appointments, database_staff, main_functions
+from functions import database_appointments, database_staff
 
 def startup():
     '''user selects a login option.'''
@@ -63,4 +63,10 @@ def menu(admin):
     ()
 
 
-startup()
+import hashlib
+
+#Hashing
+staff_password = ""
+
+hashlib_sha1 = hashlib.sha1(staff_password)
+staff_password_hashed = hashlib_sha1.digest()
