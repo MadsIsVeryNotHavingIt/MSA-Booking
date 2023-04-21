@@ -45,6 +45,7 @@ class database_staff():
         print("\n\nCreate new staff login\n")
         print("Please enter new user data:")
         staff_number = input("Please enter your staff number: ")
+        staff_name = input("Please enter your name: ")
         staff_password = input("Please enter a password: ")
 
         #Hashing
@@ -90,8 +91,9 @@ class main_functions():
                 if cur.fetchall() == password:
                     print("Login successful!")
                     main_functions.menu(self, admin = False)
-            except:
+            except any:
                 print("Incorrect login details.")
+
                 tries = tries + 1
 
     def admin_login(self):
@@ -113,8 +115,8 @@ class main_functions():
         print("Too many attempts! The program will now close.")
 
     def menu(self, admin):
-        print("")
+        pass
 
     def staff_menu(self):
         print("\n\nWelcome!\n\n")
-        print("")
+        pass
