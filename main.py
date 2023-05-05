@@ -1,6 +1,8 @@
 import sqlite3
-from flask import Flask, render_template, request
 import hashlib
+import sys
+from flask import Flask, render_template, request
+
 con = sqlite3.connect('msaBooking.db')
 cur = con.cursor()
 
@@ -34,7 +36,7 @@ def staff_login():
             #fetches the staff password from the database via searching by staff number
             if cur.fetchall() == password or forced_login == True:
                 print("Login successful!")
-                menu(admin = False)
+                menu(admin = False, staff_number = staff_number)
         except:
             print("Incorrect login details.")
             tries = tries + 1
@@ -55,7 +57,7 @@ def admin_login():
         if staff_number == 'template_number' and password == 'template_password':
             print("Login successful!")
             logged_in = True
-            menu(admin = True)
+            menu(admin = True, staff_number = staff_number)
         
         else:
             print("Incorrect login details.\n")
@@ -65,7 +67,10 @@ def admin_login():
     print("The program will now close.")
 
 
+
 def login():
+    '''Login for staff members and administrators.'''
+
     print("\n\nStaff Login\n")
     for tries in range(0,2):
         print("Please enter your login details:")
@@ -75,7 +80,7 @@ def login():
         if staff_number == 'template_number' and password == 'template_password':
             print("Login successful!")
             logged_in = True
-            menu(admin = True)
+            return staff_number
         
         else:
             try:
@@ -83,19 +88,67 @@ def login():
                 #queries the database by staff number to find a corresponding password
                 if cur.fetchall() == password:
                     print("Login successful!")
-                    menu(admin = False)
+                    menu(admin = False, staff_number = staff_number)
             except:
                 print("Incorrect login details.\n")
                 tries = tries + 1
 
-def menu(admin):
-    print("\n\n Main Menu\n\n")
 
-    #HTML display link goes here
+def menu(admin, staff_number):
+    '''Main menu for staff members and administrators. Behaviour changes depending on state of 'admin' variable.'''
+
+    print("\nMain Menu\n\n")
+
+
+    #Database display goes here
+
     if admin == False:
-        print("Please select a page. \n 1. Book new login \n 2. View existing appointment \n 3. Edit existing appointment \n 4. ")
+        user_select = ""
+        while user_select != '1' and user_select != '2' and user_select != '3':
+        #validation loop until user enters an interpretable input
 
-    cur.execute('''SELECT ALL cus_name, cus_address, cus_phone, staff_number, date_time FROM tblSTAFF ORDER BY date_time DESC''')
-    print(cur.fetchall())
+            print("Please select a page. \n 1. Book new login \n 2. View existing appointment \n 3. Log out")
+            user_select = input("Enter: ")
+            if user_select == '1':
+                print("Launching 'book new apppointment' page.")
+                database_appointments.new_appointment(self = "", staff_number = staff_number)
+            elif user_select == '2':
+                print("Launching 'View existing appointment' page.")
+                database_appointments.view_appointment(self = "")
+            elif user_select == '3':
+                sys.exit("Logging out. The program will now close.")
+            else:
+                print("Error.")
 
-database_staff.create_staff_table(self = "")
+    #cur.execute('''SELECT ALL cus_name, cus_address, cus_phone, staff_number, date_time FROM tblAPPOINTMENTS ORDER BY date_time DESC''')
+    #print(cur.fetchall())
+
+def staff_menu():
+    '''Main menu for staff members.'''
+
+    #Appointments display goes here.
+
+    user_select = ""
+    while user_select != '1' and user_select != '2' and user_select != '3':
+    #validation loop until user enters an interpretable input
+
+        print("Please select a page. \n 1. Book new appointment \n 2. View existing appointment \n 3. Log out")
+        user_select = input("Enter: ")
+        if user_select == '1':
+            print("Launching 'book new apppointment' page.")
+            database_appointments.new_appointment(self = "", staff_number = staff_number)
+        elif user_select == '2':
+            print("Launching 'View existing appointment' page.")
+            database_appointments.view_appointment(self = "")
+        elif user_select == '3':
+            sys.exit("Logging out. The program will now close.")
+        else:
+            print("Error.")
+
+    #cur.execute('''SELECT ALL cus_name, cus_address, cus_phone, staff_number, date_time FROM tblAPPOINTMENTS ORDER BY date_time DESC''')
+    #print(cur.fetchall())
+
+#staff_number = login()
+#menu()
+
+staff_number = '000123'
